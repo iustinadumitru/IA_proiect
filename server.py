@@ -1,6 +1,8 @@
 from flask import Flask, render_template, flash, request, redirect
 from wtforms import Form, validators, StringField, IntegerField
 
+from processing.text_processor import process_text
+
 # App config.
 DEBUG = True
 app = Flask(__name__)
@@ -19,12 +21,22 @@ def index():
     data = dict()
 
     if request.method == 'POST':
-        alfa = request.form['alpha']
+        alpha = request.form['alpha']
         input_text = request.form['input_text']
 
         if form.validate():
-            # procesari
-            flash('Eroare: text eroare.')
+            output_text, error_message = process_text(input_text, alpha)
+
+            # output_text = ''
+            # error_message = "test error"
+
+            output_text = "test text"
+            error_message = None
+
+            if error_message:
+                flash('Eroare: {}.'.format(error_message))
+            else:
+                data["output_text"] = output_text
         else:
             flash('Campul text este obligatoriu.')
 
