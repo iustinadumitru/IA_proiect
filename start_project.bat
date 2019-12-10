@@ -1,0 +1,1 @@
+C:\venvs\faculty\ia_venv\Scripts\python.exe server.py
