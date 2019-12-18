@@ -7,6 +7,6 @@ def process_text(input_text, alpha):
     :return: output_text, error (None if )
     """
     try:
-        return 'text', None
+        return 'processed text', None
     except Exception as e:
         return '', 'error message'
