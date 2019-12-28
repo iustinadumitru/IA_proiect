@@ -29,9 +29,8 @@ def index():
 
             # output_text = ''
             # error_message = "test error"
-
-            output_text = "test text"
-            error_message = None
+            # output_text = "test text"
+            # error_message = None
 
             if error_message:
                 flash('Eroare: {}.'.format(error_message))
