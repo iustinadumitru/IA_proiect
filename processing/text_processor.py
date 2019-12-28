@@ -1,9 +1,6 @@
 import re
 import nltk
 import heapq
-import urllib.request
-import bs4 as bs
-from googletrans import Translator
 
 nltk.download('stopwords')
 
@@ -24,21 +21,8 @@ def process_text(input_text, alpha):
         if alpha < 10: alpha = 10
         if alpha > 50: alpha = 50
 
-        # translator = Translator()
-        # translated_input = translator.translate(input_text, src='ro').text
-        # return translated_input, None
-
-        # Gettings the data source
-        # source = urllib.request.urlopen('http://www.istoria.md/articol/507/Mihai_Eminescu,_biografie').read()
-        #
-        # # Parsing the data/ creating BeautifulSoup object
-        # soup = bs.BeautifulSoup(source, 'lxml')
-        #
-        # # Fetching the data
-        # text = ""
-        # for paragraph in soup.find_all('p'):
-        #     text += paragraph.text
         text = input_text
+
         # Preprocessing the data
         text = re.sub(r'\[[0-9]*\]', ' ', text)
         text = re.sub(r'\s+', ' ', text)
@@ -95,6 +79,4 @@ def process_text(input_text, alpha):
         output = output[:-1]
         return output, None
     except Exception as e:
-        # return '', 'error message'
-        import traceback
-        return '', traceback.format_exc()
+        return '', 'error message'
