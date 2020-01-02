@@ -1,6 +1,7 @@
 import re
 import nltk
 import heapq
+import traceback
 
 nltk.download('stopwords')
 
@@ -56,19 +57,21 @@ def process_text(input_text, alpha):
         for sentence in sentences:
             for word in nltk.word_tokenize(sentence.lower()):
                 if word in word2count.keys():
-                    if len(sentence.split(' ')) < 25:
-                        if sentence not in sent2score.keys():
-                            sent2score[sentence] = word2count[word]
-                        else:
-                            sent2score[sentence] += word2count[word]
+                    if sentence not in sent2score.keys():
+                        sent2score[sentence] = word2count[word]
+                    else:
+                        sent2score[sentence] += word2count[word]
 
         # Gettings best n lines
         sentences_number = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
+
+        sent2score = filter_sentences(sent2score)
 
         best_sentences = heapq.nlargest(sentences_number, sent2score, key=sent2score.get)
 
         # Order sentences in chronological order
         ordered_sentences = list()
+
         for prop in sent2score.keys():
             if prop in best_sentences:
                 ordered_sentences.append(prop)
@@ -79,4 +82,28 @@ def process_text(input_text, alpha):
         output = output[:-1]
         return output, None
     except Exception as e:
+        print(traceback.format_exc())
         return '', 'error message'
+
+
+def filter_sentences(sentences):
+    res_sentences = dict()
+    for sentence in sentences.keys():
+        # dialogue
+        if re.match(r'-\s*', sentence) or re.match(r'—\s*', sentence, re.UNICODE):
+            continue
+
+        # blacklist
+        if _startswith(sentence,
+                       ['A ', 'Au ', 'Asta a ', 'Aceasta a ', 'Acesta a ', 'Acestia au ', 'El ', 'Ea ', 'Ei ', 'Ele ']):
+            continue
+
+        res_sentences[sentence] = sentences[sentence]
+    return res_sentences
+
+
+def _startswith(sentence, prefix_list):
+    for prefix in prefix_list:
+        if sentence.startswith(prefix):
+            return True
+    return False
