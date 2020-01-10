@@ -3,7 +3,7 @@ import nltk
 import heapq
 import traceback
 
-nltk.download('stopwords')
+# nltk.download('punkt')
 
 
 def process_text(input_text, alpha):
