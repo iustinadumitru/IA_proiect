@@ -1,0 +1,51 @@
+done [EDI] 0. facut ascii (pt diacritice)
+[EDI]1. 
+pt fiecare cuvant, il traduc in engleza, obtin singularul lui, traduc singularul in romana
+[DANNY]2.
+pentru partile de vorbire de aici (https://universaldependencies.org/u/pos/index.html) vom asocia un scor:
+cu biblioteca rippletagger: obtin partea de vorbire si asociez un scor astfel
+verb - +2
+substantiv normal - +2
+substantiv propriu - +4 
+alta parte - +1
+
+cuvintele pastrate intr-un dict, eg: {"cal": {"cailor", "calului"}}
+scor["cal"] = 100
+=> {"cal": 100, "cailor": 100, "calulului": 100]} (**)
+
+[BOGDAN]3. scos dialog (split dupa newline, si scos paragraful), dar facut scor pe cuvintele din paragraf
+de recalculat nr propozitiilor cand se iau cele mai bune x propoz
+
+[ANDREI]4. enumerare eliminare
+daca exista re.findall("([\w+,]+\w+)", propozitie), pt fiecare match:
+daca cuvintele din interiorul chestiei sunt adjective si adverbe obligatoriu (fara subst, etc), atunci luam adj/advb cu scorul cel mai mare din dictionarul de la (**)
+
+[BOGDAN]5. optimizare paragrafe:
+o sa avem un dict de genul
+{paragraf1: {sentence1: 10, sentence2: 20, sentence3: 50}, paragraf2: {sentence1: 16, sentence2: 25}}
+o sa avem asa: {paragraf1: suma scorurilor propozitiilor sale, paragraf2:...}
+modificam scorurile propozitiilor in functie de scorul paragrafelor: dam sansa propozitiilor cu un scor mai mic din paragrafe importante sa apara in final
+scor_propoz += int(alpha * scor_paragraf), alpha <=0.2
+
+EDY mai face niste optimizari SF
+
+
+NOTE:
+-----
+* faceti update la requirments.py
+
+* Gasit personajele principale din text: Edi
+"""Personaje principale: {}\n
+{}""".format(pers_princ, output_text)
+
+oricine modifica ceva testeaza!!!!!!!!!
+
+adaugati inputuri noi in folderul input_examples
+
+vedeti sa nu apara caractere dubioase inafara de diacritice (ex ghilimele dubioase aici http://www.istoria.md/articol/507/Mihai_Eminescu,_biografie)
+
+noi o sa ii prezentam profei pe textele noastre, daca apar caractere dubioase in textul selectat, le inlocuim de mana
+
+
+::
+{'A': 1, 'odată': 1, 'mică': 1, 'ciobăniță': 1, 'numită': 1, 'Margareta': 3, '.': 8, 'Părinții': 1, 'stinseseră': 1, 'mulți': 1, 'ani': 1, 'urmă': 2, 'și': 8, ',': 7, 'moară': 1, 'foame': 1, 'unchi': 1, 'luase': 1, 'copilă': 1, 'crească': 1, 'casa': 2, 'După': 1, 'copila': 1, 'făcu': 1, 'mare': 2, 'unchiul': 1, 'dete': 1, 'grijă': 1, 'turmă': 2, 'oi': 2, 'zise': 1, 'ducă': 1, 'deal': 1, 'păscut': 1, 'Mieii': 1, 'oile': 2, 'săreau': 1, 'colo-colo': 1, 'mâncau': 1, 'săturate': 1, 'trebuia': 1, 'bage': 1, 'bine': 1, 'seamă': 1, 'piardă': 1, 'vreuna': 1, 'Dar': 1, 'iată': 1, 'într-o': 1, 'lup': 1, 'dădu': 1, 'iama': 1, 'când': 2, 'văzură': 1, 'dihania': 1, 'setoasă': 1, 'sânge': 1, 'fugiră': 1, 'încotro': 1, 'Când': 1, 'văzu': 1, 'isprava': 1, 'lupului': 1, 'puse': 1, 'plâns': 1, 'amarnic': 1, 'Se': 1, 'întoarse': 1, 'totuși': 1, 'unchiului': 1, 'tremurând': 1, 'varga': 1, 'frică': 1, 'Unchiul': 1, 'om': 1, 'aspru': 1, 'dintr-o': 1, 'bucată': 1, 'știa': 1, 'vai': 1, 'amar': 1, 'apărea': 1}

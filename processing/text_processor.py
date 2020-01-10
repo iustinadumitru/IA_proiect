@@ -1,7 +1,13 @@
 import re
 import nltk
 import heapq
+import pprint
 import traceback
+
+from nltk.corpus import stopwords
+from gensim.models import Word2Vec
+from pattern3.text import singularize
+
 
 # nltk.download('punkt')
 
@@ -102,8 +108,61 @@ def filter_sentences(sentences):
     return res_sentences
 
 
+def find_singularity(input_text):
+    """
+    :param input_text: original text
+    :return: (word2count, dictionary_text)
+             word2count: dictionary like: {"word": {"en": "word_in_en",
+                                                    "count": 1(number)}}
+             dictionary_text: matrix with word from one sentence
+    """
+    import googletrans
+
+    word_trans = googletrans.Translator()
+
+    stop_words = nltk.corpus.stopwords.words('romanian')
+    word2count = {}
+    dictionary_text = []
+    count_sentence = 0
+    for sentence in nltk.sent_tokenize(input_text):
+        count_sentence += 1
+        sentence_words = []
+        for _word in nltk.word_tokenize(sentence):
+            if _word not in stop_words:
+                sentence_words.append(_word.lower())
+                if _word not in word2count.keys():
+                    word_in_en = word_trans.translate(_word, "en").text
+                    word_in_en = singularize(word_in_en)
+                    flag_en = 0
+                    for en_word in word2count.values():
+                        if en_word['en'] == word_in_en:
+                            en_word['count'] += 1
+                            flag_en = 1
+                    if flag_en == 0:
+                        word2count.update({_word: {"en": word_in_en, "count": 1}})
+                else:
+                    word2count[_word]["count"] += 1
+        dictionary_text.append(sentence_words)
+
+    print("Finish to process: {} sentences".format(count_sentence))
+    return word2count, dictionary_text
+
+
 def _startswith(sentence, prefix_list):
     for prefix in prefix_list:
         if sentence.startswith(prefix):
             return True
     return False
+
+
+if __name__ == "__main__":
+    input_text = ""
+    # elupoae
+    output = find_singularity(input_text)
+
+    pp = pprint.PrettyPrinter(indent=2)
+    pp.pprint(output[0])
+    print(output[1])
+
+    vocabulary = Word2Vec(output[1], min_count=1, size=100, window=5, sg=0)
+    print(vocabulary.wv.vocab.keys())
