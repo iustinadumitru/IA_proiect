@@ -24,10 +24,9 @@ def assign_score_to_words(words):
         other = +1 score
 
     :param words: a dictionary for the words, where keys are the word in romanian and words[key] is the information
-        about the respective word
+        about the respective word (output from 'find_singularity' function)
 
-    :return: same dictionary
-        each key will have an extra information slot 'score', which is the score of the word
+    :return: dictionary where each pair (key, value) will be (word, score_of_word)
     """
 
     scores = {
@@ -37,16 +36,16 @@ def assign_score_to_words(words):
         "OTHER": 1
     }
 
-    words_copy = copy.deepcopy(words)
+    words_copy = {}
     tagger = Tagger(language='ro')
     for word in words.keys():
         info = tagger.tag(word)[0]
         part_of_sentence = info[-1]
 
         if part_of_sentence in scores.keys():
-            words_copy[word]['score'] = scores[part_of_sentence] * words[word]['count']
+            words_copy[word] = scores[part_of_sentence] * words[word]['count']
         else:
-            words_copy[word]['score'] = scores['OTHER'] * words[word]['count']
+            words_copy[word] = scores['OTHER'] * words[word]['count']
 
     return words_copy
 
