@@ -4,6 +4,7 @@ import copy
 import heapq
 import pprint
 import traceback
+import googletrans
 
 from rippletagger.tagger import Tagger
 from nltk.corpus import stopwords
@@ -154,7 +155,6 @@ def find_singularity(input_text):
                                                     "count": 1(number)}}
              dictionary_text: matrix with word from one sentence
     """
-    import googletrans
 
     word_trans = googletrans.Translator()
 
