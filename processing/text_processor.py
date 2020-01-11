@@ -44,6 +44,8 @@ def assign_score_to_words(words):
 
         if part_of_sentence in scores.keys():
             words_copy[word]['score'] = scores[part_of_sentence] * words[word]['count']
+        else:
+            words_copy[word]['score'] = scores['OTHER'] * words[word]['count']
 
     return words_copy
 
