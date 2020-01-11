@@ -1,15 +1,51 @@
 import re
 import nltk
+import copy
 import heapq
 import pprint
 import traceback
 
+from rippletagger.tagger import Tagger
 from nltk.corpus import stopwords
 from gensim.models import Word2Vec
 from pattern3.text import singularize
 
 
 # nltk.download('punkt')
+
+
+def assign_score_to_words(words):
+    """
+    Function that assigns a specific score to words based on their sentence parts
+        proper noun = +4 score
+        noun = +2 score
+        verb = +2 score
+        other = +1 score
+
+    :param words: a dictionary for the words, where keys are the word in romanian and words[key] is the information
+        about the respective word
+
+    :return: same dictionary
+        each key will have an extra information slot 'score', which is the score of the word
+    """
+
+    scores = {
+        "PROPN": 4,
+        "NOUN": 2,
+        "VERB": 2,
+        "OTHER": 1
+    }
+
+    words_copy = copy.deepcopy(words)
+    tagger = Tagger(language='ro')
+    for word in words.keys():
+        info = tagger.tag(word)[0]
+        part_of_sentence = info[-1]
+
+        if part_of_sentence in scores.keys():
+            words_copy[word]['score'] = scores[part_of_sentence] * words[word]['count']
+
+    return words_copy
 
 
 def process_text(input_text, alpha):
