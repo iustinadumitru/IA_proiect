@@ -9,3 +9,6 @@ Werkzeug==0.16.0
 WTForms==2.2.1
 googletrans==2.4.0
 rippletagger==0.2
+nltk==3.4.5
+gensim==3.8.1
+pattern3==3.0.0
