@@ -230,3 +230,5 @@ ce venea dintre copaci. La început copila se temu și se ridică să fugă. Dar
 
     vocabulary = Word2Vec(output[1], min_count=1, size=100, window=5, sg=0)
     print(vocabulary.wv.vocab.keys())
+
+
