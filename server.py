@@ -1,7 +1,7 @@
 from flask import Flask, render_template, flash, request, redirect
 from wtforms import Form, validators, StringField, IntegerField
 
-from processing.text_processor import process_text
+from processing.main_text_processor import process_text
 
 # App config.
 DEBUG = True

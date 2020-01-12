@@ -4,9 +4,9 @@ import heapq
 import traceback
 from rippletagger.tagger import Tagger
 from collections import Counter
-from text_processor import assign_score_to_words
-from text_processor import process_text
-import text_processor
+from processing.text_processor import assign_score_to_words
+from processing.main_text_processor import process_text
+import processing.text_processor
 
 text1 = open(r'../input_examples/Automobilul.txt')
 text2 = open(r'../input_examples/Avionul.txt')
