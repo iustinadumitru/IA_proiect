@@ -46,7 +46,8 @@ def find_singularity(input_text):
         for word_ro, word_en in words[count_sentence: length + count_sentence]:
             if word_en not in stop_words:
                 word_singular = stemmer_singular.stem(word_en)
-                # word_origin = stemmer_origin.stem(word_singular)
+                if word_singular + "e" == word_en:
+                    word_singular = word_en
                 if word_singular not in word2count.keys():
                     word2count[word_singular] = 1
                 else:
@@ -57,10 +58,14 @@ def find_singularity(input_text):
         dictionary_text.append(sentence_en)
         count_sentence += length
 
-    vocabulary = Word2Vec(dictionary_text, min_count=1, size=100, window=5, sg=0)
+    vocabulary = Word2Vec(dictionary_text, min_count=1, size=100, window=5, sg=1)
 
     print("Finish to process: {} words".format(count_sentence))
     return word2count, dictionary_text, vocabulary
+
+
+def find_main_character(input_text):
+    pass
 
 
 def _startswith(sentence, prefix_list):
@@ -601,7 +606,7 @@ adânci bătrâneți.
 Vai, vai, cât de tristă este pricina pentru care mica cicoare albă stă așteptând răbdătoare la marginea drumului, iar în jurul ei
 se unduie plăpândele flori de cicoare albastră uitându-se în toate părțile!
 Odată, demult, mica cicoare albă era o prințesă frumoasă. Era foarte fericită căci fusese promisă unui prinț atât de chipeș,
-cum nu se mai găsea altul în lume. Dar acesta era înfumurat și nestatornic și într-o bună zi o părăsi pe preafrumoasa prințesă fără
+cum nu se mai găsea altul în lume. Dar acesta era înfumurat și nestatornic și într-o bună zi o părăsi pe prea frumoasa prințesă fără
 măcar să îi spună vreun cuvânt de adio; urcându-se deci pe cal, plecă din împărăție. Și când prințesa află și își dădu seama că
 poate rămâne singură pe veci, se puse pe un plâns amarnic ce dură zile și nopți în șir.
 Bujorii îi dispărură din obraji și se făcu tot mai albă și mai albă. Și stătea mereu în umbrarul din grădină, cu ochii în zare,
@@ -613,3 +618,9 @@ veghea aici în grădină.
 iar domnițele deveniră flori de cicoare albastră, adunate în jurul ei și uitându-se în toate direcțiile.
 Iată pricina cea tristă pentru care florile de cicoare albastră stau și acum de pază pe lângă prințesa lor
 și privesc, în timp ce mica cicoare albă așteaptă răbdătoare să i se întoarcă iubitul."""
+
+    output = find_singularity(input_text)
+    vocabulary = output[2]
+    print(vocabulary)
+    for word in vocabulary.wv.vocab:
+        print(word, " ", vocabulary.wv.most_similar(word))
