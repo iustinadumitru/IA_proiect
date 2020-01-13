@@ -85,22 +85,22 @@ class Translator:
                 request_words = words[index]
                 request_size = current_size
 
-            except Exception as e:
+            except Exception:
                 raise TranslatorException("Something went wrong while translating text, {}".
                                           format(traceback.format_exc()))
 
-
         translated_words = translated_words.split("|")
-        translated_words = list(map(lambda x: x.lower().strip(), translated_words ))
+        translated_words = list(map(lambda x: x.lower().strip(), translated_words))
         return list(zip(words, translated_words))
-
 
 
 if __name__ == '__main__':
     t = Translator()
-    # text = """"""
+    text = """"""
+    words = nltk.word_tokenize(text)
+    print(words)
     start = time.time()
-    output = t.translate_words(["mama", "casa", "masina", "proiect", "facultate"])
+    output = t.translate_words(words)
     end = time.time()
 
     print("1st translation:")
