@@ -30,14 +30,15 @@ class Translator:
         request_size = 0
 
         sentences = nltk.sent_tokenize(text)
-        print(len(sentences))
+        nr_of_sentences = len(sentences)
+
         for index in range(len(sentences)):
             length_current_sentence = len(sentences[index])
             if request_size + length_current_sentence < self.LIMIT:
                 request_size += length_current_sentence
                 request_text += " " + (sentences[index])
 
-                if index < len(sentences)-1:
+                if index < nr_of_sentences - 1:
                     continue
 
             try:
@@ -57,26 +58,64 @@ class Translator:
 
         return translated_text
 
+    def translate_words(self, words, source_lan='ro', dest_lan='en'):
+        nr_of_words = len(words)
+        translated_words = ""
+        request_words = ""
+        request_size = 0
+
+        for index in range(len(words)):
+            current_size = len(words[index]) + 1
+
+            if request_size + current_size < self.LIMIT:
+                request_words += words[index] + "|"
+                request_size += current_size
+
+                if index < nr_of_words - 1:
+                    continue
+
+            try:
+                link = self.SITE % (dest_lan, source_lan, urllib.parse.quote(request_words))
+                req = urllib.request.Request(link, headers=self.HEADER)
+
+                page = urllib.request.urlopen(req)
+                soup = BeautifulSoup(page, 'lxml')
+                translated_words += soup.find('div', {'dir': 'ltr'}).get_text()
+
+                request_words = words[index]
+                request_size = current_size
+
+            except Exception as e:
+                raise TranslatorException("Something went wrong while translating text, {}".
+                                          format(traceback.format_exc()))
+
+
+        translated_words = translated_words.split("|")
+        translated_words = list(map(lambda x: x.lower().strip(), translated_words ))
+        return list(zip(words, translated_words))
+
+
 
 if __name__ == '__main__':
     t = Translator()
-    text = """"""
+    # text = """"""
     start = time.time()
-    output = t.translate(text)
+    output = t.translate_words(["mama", "casa", "masina", "proiect", "facultate"])
     end = time.time()
+
     print("1st translation:")
     print(output)
     print("Translated whole text in {} seconds".format(end - start))
 
-    start = time.time()
-    second_output = t.translate(output, source_lan='en', dest_lan='ro')
-    end = time.time()
-
-    print("\n\n2nd translation:")
-    print(second_output)
-    print("Translated whole text in {} seconds".format(end - start))
-
-    print(len(nltk.sent_tokenize(second_output)))
+    # start = time.time()
+    # second_output = t.translate(output, source_lan='en', dest_lan='ro')
+    # end = time.time()
+    #
+    # print("\n\n2nd translation:")
+    # print(second_output)
+    # print("Translated whole text in {} seconds".format(end - start))
+    #
+    # print(len(nltk.sent_tokenize(second_output)))
     # start = time.time()
     # for word in text.split(" "):
     #     t.translate(word)
