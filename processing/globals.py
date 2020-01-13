@@ -1,14 +1,18 @@
 from rippletagger.tagger import Tagger
 from processing.text_processor import find_singularity
+from collections import defaultdict
+
+import nltk
 
 word_to_english = dict()
 #this dictionary will register the translation of a word
 #word_to_english["caine"] = "dog"
 
+WORD_COUNT = {}
 PARAGRAPH_UPDATE_CONSTANT = 0.2
 ALPHA = 10
 ORIGINAL_TEXT = ""
-_SCORES = {}
+_SCORES = defaultdict(lambda: 0)
 scores_points = {
     "PROPN": 4,
     "NOUN": 2,
@@ -41,7 +45,8 @@ def __getattr__(name):
             :return: dictionary where each pair (key, value) will be (word, score_of_word)
             """
 
-            word_count, text_sentences = find_singularity(ORIGINAL_TEXT)
+            stop_words = nltk.corpus.stopwords.words('english')
+            word_count, text_sentences, vocabulary = find_singularity(ORIGINAL_TEXT)
             tagger = Tagger(language='ro')
 
             for sentence_as_list in text_sentences:
@@ -49,11 +54,15 @@ def __getattr__(name):
                 for word in sentence:
                     word_in_en = word[0]
                     sentence_part = word[1]
+
+                    if word_in_en in stop_words:
+                        continue
+
                     if sentence_part in scores_points.keys():
-                        _SCORES[word_in_en] = scores_points[sentence_part] * word_count[word_in_en]
+                        _SCORES[word_in_en] += scores_points[sentence_part]
 
                     else:
-                        _SCORES[word_in_en] = scores_points["OTHER"] * word_count[word_in_en]
+                        _SCORES[word_in_en] += scores_points["OTHER"]
 
         return _SCORES
 
