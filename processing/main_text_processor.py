@@ -50,44 +50,39 @@ def process_text(input_text, alpha):
         # FUNCTIA: primeste textul, returneaza acelasi text dar fara unele cuvinte din enumeratie, sau fara enumeraiti
         # intregi.
         # Tokenize sentences
-        sentences = nltk.sent_tokenize(text)
-
         # Stopword list
         stop_words = nltk.corpus.stopwords.words('romanian')
 
-        # Word counts
-        # DE CALCULAT IACI SCORURILE REALE ALE CUVINTELOR
-        word2count = {}
-        for word in nltk.word_tokenize(clean_text):
-            if word not in stop_words:
-                if word not in word2count.keys():
-                    word2count[word] = 1
-                else:
-                    word2count[word] += 1
 
-        # Converting counts to weights
-        # max_count = max(word2count.values())
-        # for key in word2count.keys():
-        #    word2count[key] = word2count[key] / max_count
+        #TODO: CALCULAT SCORUL CUVINTELOR DIN TEXT
 
         # Product sentence scores
         sent2score = {}
-        for sentence in sentences:
-            for word in nltk.word_tokenize(sentence.lower()):
-                if sentence not in sent2score.keys():
-                    sent2score[sentence] = get_word_score(word)
-                else:
-                    sent2score[sentence] += get_word_score(word)
-        #calculate paragrahpes scores
+
+
         paragraphs = str.splitlines(text)
         for paragraph in paragraphs:
             if paragraph == " " or paragraph == "":
                 continue
-            sentences = nltk.sent_tokenize(text)
+            sentences = nltk.sent_tokenize(paragraph)
             paragraph_score = 0
+
+            for sentence in sentences:
+                for word in nltk.word_tokenize(sentence.lower()):
+                    from random import randrange
+                    if sentence not in sent2score.keys():
+                        # sent2score[sentence] = get_word_score(word)
+
+                        sent2score[sentence] = randrange(10)
+                    else:
+                        sent2score[sentence] += randrange(10)
+                        # sent2score[sentence] += get_word_score(word)
+            # calculate Sentences scores
+
             for sentence in sentences:
                 if sentence in sent2score.keys():
                     paragraph_score += sent2score[sentence]
+            # calculate paragrahpes scores
             for sentence in sentences:
                 if sentence in sent2score.keys():
                     sent2score[sentence] += int(PARAGRAPH_UPDATE_CONSTANT * paragraph_score)
@@ -123,5 +118,6 @@ if __name__ == '__main__':
 Cristi doarme,e vesel si n  - a facut ce trebuie.
 
 
-s - a auzit un bum.
+s - a auzit un bum. Acasa este frig.
+Afara ninge.
 """, 50)

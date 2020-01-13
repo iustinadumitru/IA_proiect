@@ -25,17 +25,17 @@ def clean_pre_text(text):
 def remove_dialog(text, alpha):
     text = re.sub(r'[ \t]*-', '-', text)
     final_text = ""
-    for i in range(len(text)):
+    i = 0
+    while i < len(text):
         if i == 0 and text[i] == "-":
             while i < len(text) and text[i] != '\n':
                 i += 1
-            i -= 1
         elif text[i] == "-" and text[i - 1] == "\n":
             while i < len(text) and text[i] != '\n':
                 i += 1
-            i -= 1
         else:
             final_text += text[i]
+            i += 1
 
     temp_text = clean_pre_text(text)
     tagger = Tagger(language="ro")
