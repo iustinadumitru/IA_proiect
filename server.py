@@ -1,6 +1,7 @@
-from flask import Flask, render_template, flash, request, redirect
 from wtforms import Form, validators, StringField, IntegerField
+from flask import Flask, render_template, flash, request, redirect
 
+from processing import globals
 from processing.main_text_processor import process_text
 
 # App config.
@@ -23,6 +24,8 @@ def index():
     if request.method == 'POST':
         alpha = request.form['alpha']
         input_text = request.form['input_text']
+
+        globals.ORIGINAL_TEXT = input_text
 
         if form.validate():
             output_text, error_message = process_text(input_text, alpha)

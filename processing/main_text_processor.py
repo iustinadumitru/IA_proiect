@@ -1,9 +1,9 @@
-import heapq
 import re
+import nltk
+import heapq
 import traceback
 
-import nltk
-
+from processing import globals
 from processing.remove_dialog import remove_dialog
 from processing.text_processor import filter_sentences
 
@@ -16,6 +16,7 @@ def process_text(input_text, alpha):
     :param alpha: the summarization percentage
     :return: output_text, error (None if )
     """
+
     try:
         try:
             alpha = int(alpha)
@@ -24,10 +25,13 @@ def process_text(input_text, alpha):
         if alpha < 10: alpha = 10
         if alpha > 50: alpha = 50
 
+        globals.ALPHA = alpha
         text = input_text
+
         text, alpha = remove_dialog(text, alpha)
         if alpha >= 100:
             return text, None
+
         #V1 ANDREI : AICI SCOATEM ENUMERATIILE, SI RETURNAM UN TEXT, ideal ar fi sa recalculam alfa?
         # Preprocessing the data
         text = re.sub(r'\[[0-9]*\]', ' ', text)

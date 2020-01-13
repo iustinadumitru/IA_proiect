@@ -1,51 +1,13 @@
-import pprint
 import re
-
+import pprint
 import googletrans
 
 from processing.translator import Translator
 import nltk
 from gensim.models import Word2Vec
 from pattern3.text import singularize
-from rippletagger.tagger import Tagger
-
 
 # nltk.download('punkt')
-
-
-def assign_score_to_words(words):
-    """
-    Function that assigns a specific score to words based on their sentence parts
-        proper noun = +4 score
-        noun = +2 score
-        verb = +2 score
-        other = +1 score
-
-    :param words: a dictionary for the words, where keys are the word in romanian and words[key] is the information
-        about the respective word (output from 'find_singularity' function)
-
-    :return: dictionary where each pair (key, value) will be (word, score_of_word)
-    """
-
-    scores = {
-        "PROPN": 4,
-        "NOUN": 2,
-        "VERB": 2,
-        "OTHER": 1
-    }
-
-    words_copy = {}
-    tagger = Tagger(language='ro')
-    for word in words.keys():
-        info = tagger.tag(word)[0]
-        part_of_sentence = info[-1]
-
-        if part_of_sentence in scores.keys():
-            words_copy[word] = scores[part_of_sentence] * words[word]['count']
-        else:
-            words_copy[word] = scores['OTHER'] * words[word]['count']
-
-    return words_copy
 
 
 def filter_sentences(sentences):
