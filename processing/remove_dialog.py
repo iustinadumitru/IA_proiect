@@ -6,6 +6,7 @@ from processing.globals import scores
 from processing.globals import word_score
 from processing.globals import get_hashed_english_word
 from processing.globals import add_word_to_english_dict
+from processing.translator import Translator
 
 
 def clean_pre_text(text):
@@ -13,7 +14,6 @@ def clean_pre_text(text):
     while text[first_non_whitespace_position] in [" ", "\n", "\t"]:
         first_non_whitespace_position += 1
     text = text[first_non_whitespace_position:]
-    text = re.sub(r'[0-9]+', ' ', text)
     text = re.sub(r'[ \t]+', ' ', text)
     text = re.sub(r'[\n]+', '\n', text)
     text = re.sub(r'-[ \t]*', '-', text)
@@ -23,11 +23,24 @@ def clean_pre_text(text):
 
 
 def remove_dialog(text, alpha):
-    text = clean_pre_text(text)
+    text = re.sub(r'[ \t]*-', '-', text)
+    final_text = ""
+    for i in range(len(text)):
+        if i == 0 and text[i] == "-":
+            while i < len(text) and text[i] != '\n':
+                i += 1
+            i -= 1
+        elif text[i] == "-" and text[i - 1] == "\n":
+            while i < len(text) and text[i] != '\n':
+                i += 1
+            i -= 1
+        else:
+            final_text += text[i]
+
+    temp_text = clean_pre_text(text)
     tagger = Tagger(language="ro")
-    original_len = len(text)
-    paragraphs = str.splitlines(text)
-    new_text = " "
+    original_len = len(temp_text)
+    paragraphs = str.splitlines(temp_text)
     word_multiple_tags = dict()
     for paragraph in paragraphs:
         if paragraph == " " or paragraph == "":
@@ -37,24 +50,15 @@ def remove_dialog(text, alpha):
             first_non_whitespace_position += 1
         paragraph = paragraph[first_non_whitespace_position:]
         if paragraph[0] != "-":
-            new_text += "\n" + paragraph
             continue
         #print("-------------")
         paragraph = paragraph[1:]
         paragraph = re.sub(r'[-]', ' ', paragraph)
         temp_tags = tagger.tag(paragraph)
 
-        local_word_to_en_count = translate_words(paragraph)
-        #local_word_to_en_count = None
-        #print(local_word_to_en_count)
-        if local_word_to_en_count:
-            for it in local_word_to_en_count.items():
-                #ro_word = it[0]
-                #eng_word = it[1]["en"]
-                #if ro_word not in word_to_english:
-                    #word_to_english[ro_word.lower()] = eng_word.lower()
-                if it[1].lower() not in word_to_english:
-                    add_word_to_english_dict(it[0], it[1])
+        #add_words_using_class(paragraph)
+        #add_words_old_method(paragraph)
+        #TODO: DECOMMENT THIS AND TEST IT BEFORE PROD RELEASE
 
         right_tags = []
         for it in temp_tags:
@@ -87,14 +91,42 @@ def remove_dialog(text, alpha):
         tag = tag_nr[0]
         nr = tag_nr[1]
         update_dict(word, tag, nr)
-    new_len = len(new_text)
+    new_len = len(final_text)
     dialog_len = original_len - new_len
     alpha_dialog_cut = dialog_len * 1.0 / original_len * 100
     if int(alpha_dialog_cut) >= 99 - alpha or alpha_dialog_cut >= 100:
         new_alpha = 101
     else:
         new_alpha = int(100 * alpha / (100 - alpha_dialog_cut))
-    return new_text, new_alpha
+    return final_text, new_alpha
+
+
+def add_words_old_method(paragraph):
+    local_word_to_en = translate_words(paragraph)
+    # local_word_to_en_count = None
+    # print(local_word_to_en_count)
+    if local_word_to_en:
+        for it in local_word_to_en.items():
+            if it[0].lower() not in word_to_english.keys():
+                add_word_to_english_dict(it[0], it[1])
+
+def add_words_using_class(paragraph):
+    print(paragraph)
+    paragraph[len(paragraph)] = "."
+    word_list = list()
+    word = ""
+    for letter in paragraph:
+        if letter.isalpha():
+            word += letter
+        else:
+            word_list.append(word)
+            word = ""
+    translator = Translator()
+    local_word_to_en = translator.translate_words(word_list)
+    if local_word_to_en:
+        for it in local_word_to_en.items():
+            if it[0].lower() not in word_to_english.keys():
+                add_word_to_english_dict(it[0], it[1])
 
 
 def update_dict(word, tag, count):
@@ -113,9 +145,13 @@ def update_dict(word, tag, count):
             word_score[eng_word] = scores["OTHER"] * count
 
 if __name__ == '__main__':
-
+    print(remove_dialog("""-piata pietei pietelor Piata si au mers si au corectat chestii. Masina a mers foarte bine afara.
+                paragraf cu caractere dubioase:`'][:}{.
+                Acesta este un cuvant normal, iar acesta nu.
+                -Alt dialog incepe aici.""", 1))
+    exit(99)
     print(remove_dialog("""
-    -Germania a ajuns acasa. A avut nevoie de o geanta.
+    -pisicilor pisicile Germania a ajuns acasa. A avut nevoie de o geanta.
     -Primul automobil, construit de inginerul german Karl Benz in anul 1885, s-a numit Motorwagen si era vehicul propulsat de un motor cu explozie in patru timpi, alimentat cu benzina.
     
     -Pentru a porni, motorul trebuia incalzit mai intai cu apa fierbinte, iar apoi, in timp ce soferul manevra pornirea, vehiculul trebuia impins pana cand pistoanele ajungeau sa functioneze singure.
@@ -136,10 +172,7 @@ if __name__ == '__main__':
     
     """, 50))
     exit(99)
-    print(remove_dialog("""-   piata pietei pietelor Piata si au mers si au corectat chestii. Masina a mers foarte bine afara.
-            paragraf cu caractere dubioase:`'][:}{.
-            Acesta este un cuvant normal, iar acesta nu.
-            -Alt dialog incepe aici.""", 1))
+
     print(remove_dialog("""
         Acasa ploua ieri.
         - Casa casei caselor erau verzi.

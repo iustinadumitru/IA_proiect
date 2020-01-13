@@ -1,10 +1,11 @@
 from rippletagger.tagger import Tagger
-from .text_processor import find_singularity
+from processing.text_processor import find_singularity
 
 word_to_english = dict()
 #this dictionary will register the translation of a word
 #word_to_english["caine"] = "dog"
 
+PARAGRAPH_UPDATE_CONSTANT = 0.2
 ALPHA = 10
 ORIGINAL_TEXT = ""
 _SCORES = {}
