@@ -59,10 +59,12 @@ class Translator:
         return translated_text
 
     def translate_words(self, words, source_lan='ro', dest_lan='en'):
-        nr_of_words = len(words)
         translated_words = ""
         request_words = ""
         request_size = 0
+
+        words = list(filter(lambda x: x not in ".,!?\"\'„”;", words))
+        nr_of_words = len(words)
 
         for index in range(len(words)):
             current_size = len(words[index]) + 1
@@ -80,7 +82,7 @@ class Translator:
 
                 page = urllib.request.urlopen(req)
                 soup = BeautifulSoup(page, 'lxml')
-                translated_words += soup.find('div', {'dir': 'ltr'}).get_text()
+                translated_words += soup.find('div', {'dir': 'ltr'}).get_text() + "|"
 
                 request_words = words[index]
                 request_size = current_size
