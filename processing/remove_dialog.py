@@ -1,11 +1,11 @@
 import re
 from rippletagger.tagger import Tagger
-from processing.text_processor import translate_words
 from processing.globals import word_to_english
 from processing.globals import scores
 from processing.globals import word_score
 from processing.globals import get_hashed_english_word
 from processing.globals import add_word_to_english_dict
+from processing.text_processor import find_singularity
 from processing.translator import Translator
 
 
@@ -56,8 +56,7 @@ def remove_dialog(text, alpha):
         paragraph = re.sub(r'[-]', ' ', paragraph)
         temp_tags = tagger.tag(paragraph)
 
-        #add_words_using_class(paragraph)
-        #add_words_old_method(paragraph)
+        add_words_using_class(paragraph)
         #TODO: DECOMMENT THIS AND TEST IT BEFORE PROD RELEASE
 
         right_tags = []
@@ -100,19 +99,9 @@ def remove_dialog(text, alpha):
         new_alpha = int(100 * alpha / (100 - alpha_dialog_cut))
     return final_text, new_alpha
 
-
-def add_words_old_method(paragraph):
-    local_word_to_en = translate_words(paragraph)
-    # local_word_to_en_count = None
-    # print(local_word_to_en_count)
-    if local_word_to_en:
-        for it in local_word_to_en.items():
-            if it[0].lower() not in word_to_english.keys():
-                add_word_to_english_dict(it[0], it[1])
-
 def add_words_using_class(paragraph):
     print(paragraph)
-    paragraph[len(paragraph)] = "."
+    paragraph += "."
     word_list = list()
     word = ""
     for letter in paragraph:
@@ -121,8 +110,9 @@ def add_words_using_class(paragraph):
         else:
             word_list.append(word)
             word = ""
+    #TODO: TEST THIS AFTER FIND_SINGULARITY WORKS CORRECTLY
     translator = Translator()
-    local_word_to_en = translator.translate_words(word_list)
+    local_word_to_en = find_singularity(paragraph)
     if local_word_to_en:
         for it in local_word_to_en.items():
             if it[0].lower() not in word_to_english.keys():

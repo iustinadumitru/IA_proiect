@@ -9,6 +9,7 @@ word_to_english = dict()
 #word_to_english["caine"] = "dog"
 
 WORD_COUNT = {}
+MAX_SCORE = int(1e9)
 PARAGRAPH_UPDATE_CONSTANT = 0.2
 ALPHA = 10
 ORIGINAL_TEXT = ""

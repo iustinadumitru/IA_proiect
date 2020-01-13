@@ -4,7 +4,7 @@ import time
 import traceback
 import urllib.parse
 import urllib.request
-
+from polyglot.text import Text
 from bs4 import BeautifulSoup
 
 
@@ -651,6 +651,15 @@ veghea aici în grădină.
 iar domnițele deveniră flori de cicoare albastră, adunate în jurul ei și uitându-se în toate direcțiile.
 Iată pricina cea tristă pentru care florile de cicoare albastră stau și acum de pază pe lângă prințesa lor
 și privesc, în timp ce mica cicoare albă așteaptă răbdătoare să i se întoarcă iubitul."""
+
+    start = time.time()
+    print(Text)
+
+    print("1st translation:")
+    print(Text(text, hint_language_code="ro").entities)
+    end = time.time()
+    print("Translated whole text in {} seconds".format(end - start))
+
     words = nltk.word_tokenize(text)
     print(words)
     start = time.time()

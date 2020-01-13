@@ -6,6 +6,7 @@ import traceback
 from processing import globals
 from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
 from processing.remove_dialog import remove_dialog
+from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
 from processing.text_processor import filter_sentences
 
 
@@ -30,6 +31,7 @@ def process_text(input_text, alpha):
 
         globals.ALPHA = alpha
         text = input_text
+        principal_character_name = get_principal_character_name(text)
         text = re.sub(r'[0-9]+', ' ', text)  # removing numbers
         text = re.sub(r'[ \t]*-', '-', text)  # removing spaces before dialogue line
         text, alpha = remove_dialog(text, alpha)
@@ -42,25 +44,20 @@ def process_text(input_text, alpha):
         text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
         text = re.sub(r'(\W)', r' \1 ', text)
         text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
-        clean_text = text.lower()
-        clean_text = re.sub(r'\W', ' ', clean_text)
-        clean_text = re.sub(r'\d', ' ', clean_text)
-        clean_text = re.sub(r'\s+', ' ', clean_text)
         # V2 ANDREI : SAU AICI(depinde cata nevoie de prelucrare ai
         # FUNCTIA: primeste textul, returneaza acelasi text dar fara unele cuvinte din enumeratie, sau fara enumeraiti
         # intregi.
-        # Tokenize sentences
+
         # Stopword list
         stop_words = nltk.corpus.stopwords.words('romanian')
 
-
-        #TODO: CALCULAT SCORUL CUVINTELOR DIN TEXT
+        # TODO: CALCULAT SCORUL CUVINTELOR DIN TEXT
 
         # Product sentence scores
         sent2score = {}
 
-
         paragraphs = str.splitlines(text)
+        set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
         for paragraph in paragraphs:
             if paragraph == " " or paragraph == "":
                 continue
@@ -72,7 +69,7 @@ def process_text(input_text, alpha):
                     from random import randrange
                     if sentence not in sent2score.keys():
                         # sent2score[sentence] = get_word_score(word)
-
+                        # TODO: FIX THIS HERE AFTER TEXT IS ANALYSED
                         sent2score[sentence] = randrange(10)
                     else:
                         sent2score[sentence] += randrange(10)
@@ -86,7 +83,6 @@ def process_text(input_text, alpha):
             for sentence in sentences:
                 if sentence in sent2score.keys():
                     sent2score[sentence] += int(PARAGRAPH_UPDATE_CONSTANT * paragraph_score)
-
 
         # Gettings best n lines
         sentences_number = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
