@@ -41,17 +41,19 @@ def __getattr__(name):
             :return: dictionary where each pair (key, value) will be (word, score_of_word)
             """
 
-            words, _ = find_singularity(ORIGINAL_TEXT)
+            word_count, text_sentences = find_singularity(ORIGINAL_TEXT)
             tagger = Tagger(language='ro')
-            for word in words.keys():
-                info = tagger.tag(word)[0]
-                part_of_sentence = info[-1]
 
-                if part_of_sentence in scores_points.keys():
-                    _SCORES[word] = scores_points[part_of_sentence] * words[word]['count']
+            for sentence_as_list in text_sentences:
+                sentence = tagger.tag(" ".join(sentence_as_list))
+                for word in sentence:
+                    word_in_en = word[0]
+                    sentence_part = word[1]
+                    if sentence_part in scores_points.keys():
+                        _SCORES[word_in_en] = scores_points[sentence_part] * word_count[word_in_en]
 
-                else:
-                    _SCORES[word] = scores_points['OTHER'] * words[word]['count']
+                    else:
+                        _SCORES[word_in_en] = scores_points["OTHER"] * word_count[word_in_en]
 
         return _SCORES
 
