@@ -6,7 +6,9 @@ from rippletagger.tagger import Tagger
 from collections import Counter
 from processing.text_processor import assign_score_to_words
 from processing.main_text_processor import process_text
+import processing.globals
 import processing.text_processor
+# _SCORES = {'iunie':3, 'surmenat':5, 'poetul':3}
 
 text1 = open(r'../input_examples/Automobilul.txt')
 text2 = open(r'../input_examples/Avionul.txt')
@@ -15,7 +17,7 @@ text4 = open(r'../input_examples/Incalzirea_globala.txt')
 text5 = open(r'../input_examples/Mihai_Eminescu.txt')
 
 
-def eliminate_enumerations(sentences, scores = {}):
+def eliminate_enumerations(sentences):
     """
     This function eliminates enumerations from sentences
     :param sentences: the output from @process_text
@@ -23,14 +25,11 @@ def eliminate_enumerations(sentences, scores = {}):
     :return: dict: keys: sentences with the eliminated enumerations if it's the case
 		     values: for each sentence, the word that had the highest score or None if no enumeration was found
     """
-    enum_regexp = re.compile(r"((\w+\-?\w+\s*\,\s*){2,100}\w+\-?\w+)|((\w+\-?\w+\s*\,\s*){1,100}\s*\w+\s+(si)\s+\w+)")
-    enum_regexp_special_case = re.compile(r"((\w+\-?\w+\s*\,\s*){2,100})")
+    enum_regexp = re.compile(r'((\w+\-?\w+\s*\,\s*){2,100}\w+\-?\w+)|((\w+\-?\w+\s*\,\s*){1,100}\s*\w+\s+(si)\s+\w+)')
+    enum_regexp_special_case = re.compile(r'((\w+\-?\w+\s*\,\s*){2,100})')
     tagger = Tagger(language="ro")
-    tagged_sentences = tagger.tag(sentences[0])
-
-    # todo: process the text into sentences if the input is changed
-    # list of strings
-    sentences = sentences[0].split('\n\n')
+    tagged_sentences = tagger.tag(sentences)
+    sentences = nltk.sent_tokenize(sentences)
 
     # finding the enumerations
     enumerations = list()
@@ -60,8 +59,8 @@ def eliminate_enumerations(sentences, scores = {}):
         else:
             tokenized_enums.append([[], []])
 
-    # the output dictionary
-    no_enum_sen_wscore = dict()
+    # the output text
+    new_text = ''
 
     # for each enumeartion
     for enumeration in range(0, len(enumerations)):
@@ -75,13 +74,13 @@ def eliminate_enumerations(sentences, scores = {}):
             # check if the words from each enumeartion are NOUN, ADJ or ADV
             count = 0
             for enum_word in p_o_speech:
-                if enum_word[1] == 'NOUN' or enum_word[1] == 'ADJ' or enum_word[1] == 'ADV' or enum_word[0].lower() == 'și':
+                if enum_word[1] == 'NOUN' or enum_word[1] == 'ADJ' or enum_word[1] == 'ADV' or enum_word[0].lower() == 'și' or enum_word[0].lower() == 'si':
                     count += 1
-
-            # if they are then eliminate the enum from the sentence and put it in output dictionary
+            # if they are then eliminate the enum from the sentence and put it in output text
             if count == len(p_o_speech):
-                # todo: cand primesc dictionarul cu scorurile, se va alege cuvantul cu scorul maxim din p_o_speech
-                no_enum_sen_wscore[sentences[enumeration].replace(enumerations[enumeration][0], '')] = p_o_speech[0][0]
+                best_score = max([globals.SCORES[i[0]] for i in p_o_speech])
+                best_word = [i[0] for i in p_o_speech if globals.SCORES[i[0]] == best_score][0]
+                new_text += sentences[enumeration].replace(enumerations[enumeration][0], best_word)
 
             # do the same thing again for the special case if the regular case didn't match
             else:
@@ -89,19 +88,18 @@ def eliminate_enumerations(sentences, scores = {}):
                     p_o_speech_special_case = get_part_of_speech_enum(tagged_sentences, tokenized_enums[enumeration][1])
                     count = 0
                     for enum_word in p_o_speech_special_case:
-                        if enum_word[1] == 'NOUN' or enum_word[1] == 'ADJ' or enum_word[1] == 'ADV' or enum_word[0].lower() == 'și':
+                        if enum_word[1] == 'NOUN' or enum_word[1] == 'ADJ' or enum_word[1] == 'ADV' or enum_word[0].lower() == 'și' or enum_word[0].lower() == 'si':
                             count += 1
-
                     # daca este enumeratie cs ce trebuie eliminata
                     if count == len(p_o_speech_special_case):
-                        # todo: cand primesc dictionarul cu scorurile, se va alege cuvantul cu scorul maxim din p_o_speech_special_case
-                        no_enum_sen_wscore[sentences[enumeration].replace(enumerations[enumeration][1], '')] = p_o_speech_special_case[0][0]
+                        best_score = max([globals.SCORES[i[0]] for i in p_o_speech_special_case])
+                        best_word = [i[0] for i in p_o_speech_special_case if globals.SCORES[i[0]] == best_score][0]
+                        new_text += sentences[enumeration].replace(enumerations[enumeration][1], best_word)
 
         # if they are null then append to the key sentence the None value
         else:
-            no_enum_sen_wscore[sentences[enumeration]] = None
-
-    return no_enum_sen_wscore
+            new_text += sentences[enumeration]
+    return new_text
 
 
 def get_part_of_speech_enum(tagged_sentences, tokenized_enum):
@@ -117,24 +115,23 @@ def get_part_of_speech_enum(tagged_sentences, tokenized_enum):
     for elem in range(0, len(tokenized_enum)):
         part_of_speech = []
         for it in tagged_sentences:
-            if it[1] not in ["PUNCT", "", "NUM", "SYM"]:
+            if token_regex.findall(it[0]):
                 if token_regex.findall(it[0])[0].lower() == tokenized_enum[elem].lower():
                     part_of_speech.append(it[1])
         dict_occur_pospeech = Counter(part_of_speech).most_common(1)[0]
         part_of_speech_enum.append([tokenized_enum[elem], dict_occur_pospeech[0]])
     return part_of_speech_enum
 
+
 # # Test
-# texts = [process_text(text1.read(), 0), process_text(text2.read(), 100), process_text(text4.read(), 0), process_text(text5.read(), 0)]
-# for text in texts:
-#     ret_dict = eliminate_enumerations(text)
-#     print("New text:")
-#     for it in ret_dict.items():
-#         if it[1] is not None:
-#             print(it[0], ":", it[1])
-# print(text_processor.assign_score_to_words(text_processor.find_singularity(texts[0][0])[0]))
-
-
+# texts = [text1.read(), text2.read(), text4.read(), text5.read()]
+# # # print(text_processor.process_text(texts[2], 0))
+# for i in range(0, len(texts)):
+#     texts[i] = re.sub(r'[0-9]+', ' ', texts[i])  # removing numbers
+#     texts[i] = re.sub(r'[ \t]*-', '-', texts[i])  # removing spaces before dialogue line
+#
+#
+# ret_dict = eliminate_enumerations(texts[3])
 
 
 

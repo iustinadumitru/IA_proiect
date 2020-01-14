@@ -45,7 +45,7 @@ def process_text(input_text, alpha):
         text = re.sub(r'(\W)', r' \1 ', text)
         text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
         # V2 ANDREI : SAU AICI(depinde cata nevoie de prelucrare ai
-        # FUNCTIA: primeste textul, returneaza acelasi text dar fara unele cuvinte din enumeratie, sau fara enumeraiti
+        # FUNCTIA: primeste textul, returneaza acelasi text dar fara unele cuvinte din enumeratie, sau fara enumeratii
         # intregi.
 
         # Stopword list
