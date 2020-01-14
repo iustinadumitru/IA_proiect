@@ -32,7 +32,7 @@ def __getattr__(name):
     if name == "SCORES":
         if _SCORES == {}:
             """
-            Acts as a property, will be used as "globals.SCORES[word]"
+            Acts as a property, will be used as "globals.SCORES[word_romanian]"
             
             Function that assigns a specific score to words based on their sentence parts
                 proper noun = +4 score
@@ -46,24 +46,24 @@ def __getattr__(name):
             :return: dictionary where each pair (key, value) will be (word, score_of_word)
             """
 
-            stop_words = nltk.corpus.stopwords.words('english')
+            stop_words = nltk.corpus.stopwords.words('romanian')
             word_count, text_sentences, vocabulary = find_singularity(ORIGINAL_TEXT)
             tagger = Tagger(language='ro')
 
             for sentence_as_list in text_sentences:
                 sentence = tagger.tag(" ".join(sentence_as_list))
                 for word in sentence:
-                    word_in_en = word[0]
+                    word_in_ro = word[0]
                     sentence_part = word[1]
 
-                    if word_in_en in stop_words:
+                    if word_in_ro in stop_words:
                         continue
 
                     if sentence_part in scores_points.keys():
-                        _SCORES[word_in_en] += scores_points[sentence_part]
+                        _SCORES[word_in_ro] += scores_points[sentence_part]
 
                     else:
-                        _SCORES[word_in_en] += scores_points["OTHER"]
+                        _SCORES[word_in_ro] += scores_points["OTHER"]
 
         return _SCORES
 

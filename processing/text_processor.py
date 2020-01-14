@@ -1,8 +1,8 @@
 import re
-import pprint
-import googletrans
-from processing.translator import Translator
 import nltk
+from collections import defaultdict
+
+from processing.translator import Translator
 from gensim.models import Word2Vec
 from nltk.stem.porter import PorterStemmer
 
@@ -36,9 +36,11 @@ def find_singularity(input_text):
 
     tr = Translator()
     words = tr.translate_words(nltk.word_tokenize(input_text))
-    word2count = {}
+    word2count = defaultdict(lambda: 0)
+    output_count = defaultdict(lambda: 0)
     dictionary_text = []
     count_sentence = 0
+
     for sentence in nltk.sent_tokenize(input_text):
         sentence_en = []
         sentence = list(filter(lambda x: x not in ".,!?\"\'„”;", nltk.word_tokenize(sentence)))
@@ -48,20 +50,32 @@ def find_singularity(input_text):
                 word_singular = stemmer_singular.stem(word_en)
                 if word_singular + "e" == word_en:
                     word_singular = word_en
-                if word_singular not in word2count.keys():
-                    word2count[word_singular] = 1
-                else:
-                    word2count[word_singular] += 1
+
+                word2count[word_singular] += 1
                 sentence_en.append(word_singular)
+
             else:
+                word2count[word_en] += 1
                 sentence_en.append(word_en)
+
         dictionary_text.append(sentence_en)
         count_sentence += length
+
+    for word_ro, word_en in words:
+        if word_en not in stop_words:
+            word_singular = stemmer_singular.stem(word_en)
+            if word_singular + "e" == word_en:
+                word_singular = word_en
+
+            output_count[word_ro] = word2count[word_singular]
+
+        else:
+            output_count[word_ro] = word2count[word_en]
 
     vocabulary = Word2Vec(dictionary_text, min_count=1, size=100, window=5, sg=1)
 
     print("Finish to process: {} words".format(count_sentence))
-    return word2count, dictionary_text, vocabulary
+    return output_count, dictionary_text, vocabulary
 
 
 def find_main_character(input_text):
@@ -621,6 +635,5 @@ Iată pricina cea tristă pentru care florile de cicoare albastră stau și acum
 
     output = find_singularity(input_text)
     vocabulary = output[2]
-    print(vocabulary)
-    for word in vocabulary.wv.vocab:
-        print(word, " ", vocabulary.wv.most_similar(word))
+    print(output[0])
+    # print(vocabulary)
