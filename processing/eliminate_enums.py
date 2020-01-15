@@ -71,7 +71,7 @@ def eliminate_enumerations(sentences):
             if count == len(p_o_speech):
                 best_score = max([globals.SCORES[i[0]] for i in p_o_speech])
                 best_word = [i[0] for i in p_o_speech if globals.SCORES[i[0]] == best_score][0]
-                new_text += sentences[enumeration].replace(enumerations[enumeration][0], " " + best_word + " ")
+                new_text += sentences[enumeration].replace(enumerations[enumeration][0], " " + best_word + " ") + " "
 
             # do the same thing again for the special case if the regular case didn't match
             else:
@@ -85,11 +85,11 @@ def eliminate_enumerations(sentences):
                     if count == len(p_o_speech_special_case):
                         best_score = max([globals.SCORES[i[0]] for i in p_o_speech_special_case])
                         best_word = [i[0] for i in p_o_speech_special_case if globals.SCORES[i[0]] == best_score][0]
-                        new_text += sentences[enumeration].replace(enumerations[enumeration][1], " " + best_word + " ")
+                        new_text += sentences[enumeration].replace(enumerations[enumeration][1], " " + best_word + " ") + " "
 
         # if they are null then append to the key sentence the None value
         else:
-            new_text += sentences[enumeration]
+            new_text += sentences[enumeration] + " "
     return new_text
 
 
