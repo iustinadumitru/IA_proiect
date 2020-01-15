@@ -14,11 +14,6 @@ female_plural_pronouns = ["ele", "acestea", "acestea", "acelea", "dansele", "dâ
 universal_singular_pronouns = ["eu", "tu", "mie", "tie", "dumneata", "dumneavoastra"]
 universal_plural_pronouns = ["noi", "voi", "noua", "voua", "lor"]
 
-
-
-
-# TODO: COMPLETE HERE
-
 names_male_prev_statement = list()
 names_female_prev_statement = list()
 names_male_current_statement = list()
@@ -37,7 +32,8 @@ def get_principal_character_name(text):
     for it in tag:
         if it.tag == "I-PER":
             for name in it:
-                all_names.add(name.lower())
+                if name.lower() != "își": # fixes weird error in some textes??
+                    all_names.add(name.lower())
     for letter in text:
         if letter.isalpha():
             word += letter
@@ -53,18 +49,18 @@ def get_principal_character_name(text):
                 else:
                     names_male_current_statement.append(word)
             elif word in male_singular_pronouns:
-                update_name_using_reference(0, False, names_male_current_statement, names_male_prev_statement)
+                update_name_using_reference(False, names_male_current_statement, names_male_prev_statement)
             elif word in female_singular_pronouns:
-                update_name_using_reference(1, False, names_female_current_statement, names_female_prev_statement)
+                update_name_using_reference(False, names_female_current_statement, names_female_prev_statement)
             elif word in universal_singular_pronouns:
-                update_name_using_reference(2, False, names_male_current_statement + names_female_current_statement,
+                update_name_using_reference(False, names_male_current_statement + names_female_current_statement,
                                             names_female_current_statement + names_male_current_statement)
             elif word in male_plural_pronouns:
-                update_name_using_reference(0, True, names_male_current_statement, names_male_prev_statement)
+                update_name_using_reference(True, names_male_current_statement, names_male_prev_statement)
             elif word in female_plural_pronouns:
-                update_name_using_reference(1, True, names_female_current_statement, names_female_prev_statement)
+                update_name_using_reference(True, names_female_current_statement, names_female_prev_statement)
             elif word in universal_plural_pronouns:
-                update_name_using_reference(2, True, names_male_current_statement + names_female_current_statement,
+                update_name_using_reference(True, names_male_current_statement + names_female_current_statement,
                                             names_female_current_statement + names_male_current_statement)
             word = ""
         if letter == '.':
@@ -84,7 +80,7 @@ def get_principal_character_name(text):
     return return_name
 
 
-def update_name_using_reference(tag, is_plural, names_current, names_prev):
+def update_name_using_reference(is_plural, names_current, names_prev):
     global count_names
     found = False
     for name in reversed(names_current):

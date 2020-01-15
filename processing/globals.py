@@ -12,6 +12,7 @@ word_to_english = dict()
 ENUMERATIONS_REMOVED = list()
 NR_LINES_DIALOG_REMOVED = 0
 NR_OF_LINES_SHOWN = 0
+MAIN_CHARACTER_NAME = "No one"
 
 WORD_COUNT = {}
 MAX_SCORE = int(1e9)

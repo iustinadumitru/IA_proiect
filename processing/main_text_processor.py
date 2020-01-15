@@ -7,8 +7,9 @@ from processing import globals
 from collections import defaultdict
 from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
 from processing.remove_dialog_v2 import remove_dialog
-#from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
+# from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
 from processing.eliminate_enums import eliminate_enumerations
+
 
 def process_text(input_text, alpha):
     """
@@ -32,6 +33,7 @@ def process_text(input_text, alpha):
         globals.ALPHA = alpha
         text = input_text
         # principal_character_name = get_principal_character_name(text)
+        #globals.MAIN_CHARACTER_NAME = principal_character_name
         text = re.sub(r'[ \t]*-', '-', text)  # removing spaces before dialogue line
         text = re.sub(r'[ \t]+', ' ', text)  # removing multiple spaces / tab into a single space
         text = re.sub(r'([-*/_=+~`,.!;\'\"\\\[\]?])', r' \1 ',
@@ -56,7 +58,6 @@ def process_text(input_text, alpha):
 
         paragraphs = str.splitlines(text)
         # set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
-        #set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
         # todo: decomment this after polyglot is installed
         for paragraph in paragraphs:
             if paragraph == " " or paragraph == "":
@@ -104,7 +105,6 @@ def process_text(input_text, alpha):
 
 
 if __name__ == '__main__':
-
     globals.ORIGINAL_TEXT = """
    -        Acasa e bine. Merge treaba.Bun.Yeah.
 Cristi doarme,e vesel si n  - a facut ce trebuie.
@@ -113,12 +113,6 @@ Cristi doarme,e vesel si n  - a facut ce trebuie.
 s - a auzit un bum. Acasa este frig.
 Afara ninge.
 """
-    print(process_text("""
-   -        Acasa e bine. Merge treaba.Bun.Yeah.
-Cristi doarme,e vesel si n  - a facut ce trebuie.
-
-
-s - a auzit un bum. Acasa este frig.
-Afara ninge.
-""", 50))
+    print(process_text(globals.ORIGINAL_TEXT, 50))
     print(globals.NR_LINES_DIALOG_REMOVED)
+    print(globals.MAIN_CHARACTER_NAME)
