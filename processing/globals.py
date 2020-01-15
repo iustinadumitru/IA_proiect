@@ -1,8 +1,9 @@
+import re
+import nltk
+
+from collections import defaultdict
 from rippletagger.tagger import Tagger
 from processing.text_processor import find_singularity
-from collections import defaultdict
-
-import nltk
 
 word_to_english = dict()
 #this dictionary will register the translation of a word
@@ -15,9 +16,9 @@ ALPHA = 10
 ORIGINAL_TEXT = ""
 _SCORES = defaultdict(lambda: 0)
 scores_points = {
-    "PROPN": 4,
-    "NOUN": 2,
-    "VERB": 2,
+    "PROPN": 10,
+    "NOUN": 5,
+    "VERB": 3,
     "OTHER": 1
 }
 
@@ -47,23 +48,47 @@ def __getattr__(name):
             """
 
             stop_words = nltk.corpus.stopwords.words('romanian')
-            word_count, text_sentences, vocabulary = find_singularity(ORIGINAL_TEXT)
+            word_count, _, _ = find_singularity(ORIGINAL_TEXT)
             tagger = Tagger(language='ro')
 
-            for sentence_as_list in text_sentences:
-                sentence = tagger.tag(" ".join(sentence_as_list))
+            words_part_of_sent = dict()
+            for sentence in nltk.sent_tokenize(ORIGINAL_TEXT):
+                sentence = re.sub("[.,!?%^~$„”\"\']", "", sentence)
+                sentence = re.sub(":", " ", sentence)
+
+                sentence = tagger.tag(sentence)
                 for word in sentence:
                     word_in_ro = word[0]
                     sentence_part = word[1]
 
-                    if word_in_ro in stop_words:
-                        continue
+                    if word_in_ro not in words_part_of_sent.keys():
+                        words_part_of_sent[word_in_ro] = defaultdict(lambda: 0)
 
-                    if sentence_part in scores_points.keys():
-                        _SCORES[word_in_ro] += scores_points[sentence_part]
+                    words_part_of_sent[word_in_ro][sentence_part] += 1
 
-                    else:
-                        _SCORES[word_in_ro] += scores_points["OTHER"]
+            for word in words_part_of_sent.keys():
+                max_word_part_count = 0
+                word_part = ""
+
+                if word in stop_words.lower():
+                    _SCORES[word] = 1
+                    continue
+
+                if word in _SCORES.keys():
+                    continue
+
+                for part_of_sent in words_part_of_sent[word].keys():
+                    count = words_part_of_sent[word][part_of_sent]
+
+                    if count > max_word_part_count:
+                        max_word_part_count = count
+                        word_part = part_of_sent
+
+                if word_part in scores_points.keys():
+                    _SCORES[word] = word_count[word] * scores_points[word_part]
+
+                else:
+                    _SCORES[word] = word_count[word] * scores_points["OTHER"]
 
         return _SCORES
 
