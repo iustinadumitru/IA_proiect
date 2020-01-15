@@ -8,18 +8,18 @@ from nltk.stem.porter import PorterStemmer
 
 
 # nltk.download('punkt')
-def filter_sentences(sentences):
-    res_sentences = dict()
-    for sentence in sentences.keys():
-        # dialogue
-        if re.match(r'-\s*', sentence) or re.match(r'—\s*', sentence, re.UNICODE):
-            continue
-        # blacklist
-        if _startswith(sentence,
-                       ['A ', 'Au ', 'Asta a ', 'Aceasta a ', 'Acesta a ', 'Acestia au ', 'El ', 'Ea ', 'Ei ', 'Ele ']):
-            continue
-        res_sentences[sentence] = sentences[sentence]
-    return res_sentences
+# def filter_sentences(sentences):
+#     res_sentences = dict()
+#     for sentence in sentences.keys():
+#         # dialogue
+#         if re.match(r'-\s*', sentence) or re.match(r'—\s*', sentence, re.UNICODE):
+#             continue
+#         # blacklist
+#         if _startswith(sentence,
+#                        ['A ', 'Au ', 'Asta a ', 'Aceasta a ', 'Acesta a ', 'Acestia au ', 'El ', 'Ea ', 'Ei ', 'Ele ']):
+#             continue
+#         res_sentences[sentence] = sentences[sentence]
+#     return res_sentences
 
 
 def find_singularity(input_text):

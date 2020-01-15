@@ -68,14 +68,6 @@ def process_text(input_text, alpha):
             for sentence in sentences:
                 for word in nltk.word_tokenize(sentence.lower()):
                     sent2score[sentence] += globals.SCORES[word]
-                    if sentence not in sent2score.keys():
-                        # sent2score[sentence] = get_word_score(word)
-                        # TODO: FIX THIS HERE AFTER TEXT IS ANALYSED
-                        sent2score[sentence] = randrange(10)
-                    else:
-                        sent2score[sentence] += randrange(10)
-                        # sent2score[sentence] += get_word_score(word)
-            # calculate Sentences scores
 
             for sentence in sentences:
                 if sentence in sent2score.keys():
@@ -89,7 +81,7 @@ def process_text(input_text, alpha):
         # Gettings best n lines
         sentences_number = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
 
-        sent2score = filter_sentences(sent2score)
+        # sent2score = filter_sentences(sent2score)
 
         best_sentences = heapq.nlargest(sentences_number, sent2score, key=sent2score.get)
 
