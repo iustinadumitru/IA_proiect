@@ -8,7 +8,6 @@ from collections import defaultdict
 from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
 from processing.remove_dialog_v2 import remove_dialog
 #from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
-from processing.text_processor import filter_sentences
 from processing.eliminate_enums import eliminate_enumerations
 
 def process_text(input_text, alpha):
