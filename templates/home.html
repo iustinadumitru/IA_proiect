@@ -47,33 +47,60 @@
                         <div class="ibox-content">
 
                             {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
+                                {% if messages %}
 
-                            {% for message in messages %}
+                                    {% for message in messages %}
 
-                            {% if "Eroare" not in message[1]: %}
-                            <div class="alert alert-info" id="alert_message_info">
-                                {{ message[1] }}
-                            </div>
-                            {% endif %}
+                                        {% if "Eroare" not in message[1] %}
+                                            <div class="alert alert-info" id="alert_message_info">
+                                                {{ message[1] }}
+                                            </div>
+                                        {% endif %}
 
-                            {% if "Eroare" in message[1]: %}
-                            <div class="alert alert-warning" id="alert_message_warning">
-                                {{ message[1] }}
-                            </div>
-                            {% endif %}
+                                        {% if "Eroare" in message[1] %}
+                                            <div class="alert alert-warning" id="alert_message_warning">
+                                                {{ message[1] }}
+                                            </div>
+                                        {% endif %}
 
-                            {% endfor %}
+                                    {% endfor %}
 
-                            {% endif %}
+                                {% endif %}
 
                             {% endwith %}
 
                             <br>
                             {% if data.output_text %}
-                            <textarea rows="4" cols="50" readonly="readonly" style="height:500px;width:70%">
-{{ data.output_text }}
-                            </textarea>
+                                <textarea rows="4" cols="50" readonly="readonly" style="height:500px;width:70%">
+                                    {{ data.output_text }}
+                                </textarea>
+                                <br>
+                                <br>
+                                <div class="container">
+                                    <div class="column">
+                                        <div class="row-sm">
+                                            <b>Showing </b>{{ data.lines_shown }} <b> sentences </b>
+                                        </div>
+
+                                        <br>
+
+                                        <div class="row-sm">
+                                            <p> <b> Number of lines with dialog removed: </b> {{ data.lines_removed }} </p>
+                                        </div>
+
+                                        <div class="row-sm">
+                                            <p> <b>Enumerations removed: </b> </p>
+                                            -
+                                            {% for index in range((data.enumerations_removed | length) - 1)%}
+                                                {{ data.enumerations_removed[index] }},
+                                            {% endfor %}
+
+                                            {{ data.enumerations_removed[-1] }}
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             {% else %}
                             <form action="" method="POST" role="form">
                                 {{ form.csrf }}
