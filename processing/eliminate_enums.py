@@ -2,14 +2,10 @@ import re
 import nltk
 from rippletagger.tagger import Tagger
 from collections import Counter
-import globals
+from processing.globals import globals
 # _SCORES = {'iunie':3, 'surmenat':5, 'poetul':3}
 
-text1 = open(r'../input_examples/Automobilul.txt')
-text2 = open(r'../input_examples/Avionul.txt')
-text3 = open(r'../input_examples/GradinaFermecata.txt')
-text4 = open(r'../input_examples/Incalzirea_globala.txt')
-text5 = open(r'../input_examples/Mihai_Eminescu.txt')
+
 
 
 def eliminate_enumerations(sentences):
@@ -117,7 +113,12 @@ def get_part_of_speech_enum(tagged_sentences, tokenized_enum):
         part_of_speech_enum.append([tokenized_enum[elem], dict_occur_pospeech[0]])
     return part_of_speech_enum
 
-
+if __name__ == '__main__':
+    text1 = open(r'../input_examples/Automobilul.txt')
+    text2 = open(r'../input_examples/Avionul.txt')
+    text3 = open(r'../input_examples/GradinaFermecata.txt')
+    text4 = open(r'../input_examples/Incalzirea_globala.txt')
+    text5 = open(r'../input_examples/Mihai_Eminescu.txt')
 # # Test
 # texts = [text1.read(), text2.read(), text4.read(), text5.read()]
 # # # print(text_processor.process_text(texts[2], 0))

@@ -5,11 +5,10 @@ import traceback
 
 from processing import globals
 from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
-from processing.remove_dialog import remove_dialog
-from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
+from processing.remove_dialog_v2 import remove_dialog
+#from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
 from processing.text_processor import filter_sentences
 from processing.eliminate_enums import eliminate_enumerations
-
 
 def process_text(input_text, alpha):
     """
@@ -32,23 +31,22 @@ def process_text(input_text, alpha):
 
         globals.ALPHA = alpha
         text = input_text
-        principal_character_name = get_principal_character_name(text)
-        text = re.sub(r'[0-9]+', ' ', text)  # removing numbers
+        # principal_character_name = get_principal_character_name(text)
         text = re.sub(r'[ \t]*-', '-', text)  # removing spaces before dialogue line
+        text = re.sub(r'[ \t]+', ' ', text)  # removing multiple spaces / tab into a single space
+        text = re.sub(r'([-*/_=+~`,.!;\'\"\\\[\]?])', r' \1 ',
+                      text)  # adding a space before / after every non alfa numeric character
+        # just so it can't be taken into account with a word (ex: car.Car => car . Car )
+        text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
+        text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
+
+        # TODO: CALCUALTE WORD SCORES HERE
+
         text, alpha = remove_dialog(text, alpha)
         if alpha >= 100:
             return text, None
 
         text = eliminate_enumerations(text)
-
-        # Preprocessing the data
-        text = re.sub(r'[-]', ' ', text)  # eliminating -
-        text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
-        text = re.sub(r'(\W)', r' \1 ', text)
-        text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
-
-        # Stopword list
-        stop_words = nltk.corpus.stopwords.words('romanian')
 
         # TODO: CALCULAT SCORUL CUVINTELOR DIN TEXT
 
@@ -56,7 +54,9 @@ def process_text(input_text, alpha):
         sent2score = {}
 
         paragraphs = str.splitlines(text)
-        set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
+        # set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
+        #set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
+        # todo: decomment this after polyglot is installed
         for paragraph in paragraphs:
             if paragraph == " " or paragraph == "":
                 continue

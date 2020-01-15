@@ -77,11 +77,6 @@ def find_singularity(input_text):
     print("Finish to process: {} words".format(count_sentence))
     return output_count, dictionary_text, vocabulary
 
-
-def find_main_character(input_text):
-    pass
-
-
 def _startswith(sentence, prefix_list):
     for prefix in prefix_list:
         if sentence.startswith(prefix):
