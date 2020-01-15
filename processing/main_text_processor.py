@@ -97,6 +97,7 @@ def process_text(input_text, alpha):
             output += sentence + '\n\n'
         output = output[:-1]
         return output, None
+
     except Exception as e:
         print(traceback.format_exc())
         return '', 'error message'
