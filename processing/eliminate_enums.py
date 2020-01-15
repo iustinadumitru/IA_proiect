@@ -2,7 +2,7 @@ import re
 import nltk
 from rippletagger.tagger import Tagger
 from collections import Counter
-from processing.globals import globals
+from processing import globals
 # _SCORES = {'iunie':3, 'surmenat':5, 'poetul':3}
 
 
