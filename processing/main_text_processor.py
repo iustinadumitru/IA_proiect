@@ -78,11 +78,11 @@ def process_text(input_text, alpha):
                     sent2score[sentence] += int(PARAGRAPH_UPDATE_CONSTANT * paragraph_score)
 
         # Gettings best n lines
-        sentences_number = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
+        globals.NR_OF_LINES_SHOWN = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
 
         # sent2score = filter_sentences(sent2score)
 
-        best_sentences = heapq.nlargest(sentences_number, sent2score, key=sent2score.get)
+        best_sentences = heapq.nlargest(globals.NR_OF_LINES_SHOWN, sent2score, key=sent2score.get)
 
         # Order sentences in chronological order
         ordered_sentences = list()

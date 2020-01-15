@@ -97,6 +97,10 @@ def __getattr__(name):
         return _SCORES
 
 
+def reset_scores():
+    _SCORES = defaultdict(lambda: 0)
+
+
 def get_hashed_english_word(word):
     if word.lower() in word_to_english.keys():
         return (word_to_english[word.lower()]).lower()

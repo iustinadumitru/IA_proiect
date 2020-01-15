@@ -26,6 +26,7 @@ def index():
         input_text = request.form['input_text']
 
         globals.ORIGINAL_TEXT = input_text
+        globals.reset_scores()
 
         if form.validate():
             output_text, error_message = process_text(input_text, alpha)
@@ -37,6 +38,7 @@ def index():
 
             if error_message:
                 flash('Eroare: {}.'.format(error_message))
+
             else:
                 data["output_text"] = output_text
                 data["lines_removed"] = globals.NR_LINES_DIALOG_REMOVED
