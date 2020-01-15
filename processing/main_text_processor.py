@@ -8,6 +8,7 @@ from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
 from processing.remove_dialog import remove_dialog
 from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
 from processing.text_processor import filter_sentences
+from processing.eliminate_enums import eliminate_enumerations
 
 
 def process_text(input_text, alpha):
@@ -38,15 +39,13 @@ def process_text(input_text, alpha):
         if alpha >= 100:
             return text, None
 
-        # V1 ANDREI : AICI SCOATEM ENUMERATIILE, SI RETURNAM UN TEXT, ideal ar fi sa recalculam alfa?
+        text = eliminate_enumerations(text)
+
         # Preprocessing the data
         text = re.sub(r'[-]', ' ', text)  # eliminating -
         text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
         text = re.sub(r'(\W)', r' \1 ', text)
         text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
-        # V2 ANDREI : SAU AICI(depinde cata nevoie de prelucrare ai
-        # FUNCTIA: primeste textul, returneaza acelasi text dar fara unele cuvinte din enumeratie, sau fara enumeratii
-        # intregi.
 
         # Stopword list
         stop_words = nltk.corpus.stopwords.words('romanian')

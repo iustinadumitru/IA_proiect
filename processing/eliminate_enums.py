@@ -1,13 +1,8 @@
 import re
 import nltk
-import heapq
-import traceback
 from rippletagger.tagger import Tagger
 from collections import Counter
-from processing.text_processor import assign_score_to_words
-from processing.main_text_processor import process_text
-import processing.globals
-import processing.text_processor
+import globals
 # _SCORES = {'iunie':3, 'surmenat':5, 'poetul':3}
 
 text1 = open(r'../input_examples/Automobilul.txt')
