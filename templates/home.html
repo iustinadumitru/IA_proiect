@@ -85,10 +85,12 @@
                                         <br>
 
                                         <div class="row-sm">
-                                            {% if data.main_character != "No one" %} }
-                                                {{ data.main_character }}
+                                            {% if data.main_character != "No one" %}
+                                                <b> Main character: </b>{{ data.main_character }}
                                             {% endif %}
                                         </div>
+
+                                        <br>
 
                                         <div class="row-sm">
                                             <p> <b> Number of lines with dialog removed: </b> {{ data.lines_removed }} </p>
