@@ -41,7 +41,7 @@ def process_text(input_text, alpha):
         text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
 
         # This line is here just so its clear when the score is calculated
-        _ = globals.SCORES[globals.ORIGINAL_TEXT[0]]
+        _ = globals.SCORES
 
         text, alpha = remove_dialog(text, alpha)
         if alpha >= 100:
