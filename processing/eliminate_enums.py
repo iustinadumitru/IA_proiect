@@ -4,9 +4,7 @@ from rippletagger.tagger import Tagger
 from collections import Counter
 from processing import globals
 # _SCORES = {'iunie':3, 'surmenat':5, 'poetul':3}
-
-
-
+elim_enums = list()
 
 def eliminate_enumerations(sentences):
     """
@@ -72,6 +70,7 @@ def eliminate_enumerations(sentences):
                 best_score = max([globals.SCORES[i[0]] for i in p_o_speech])
                 best_word = [i[0] for i in p_o_speech if globals.SCORES[i[0]] == best_score][0]
                 new_text += sentences[enumeration].replace(enumerations[enumeration][0], " " + best_word + " ") + " "
+                elim_enums.append(enumerations[enumeration][0])
 
             # do the same thing again for the special case if the regular case didn't match
             else:
@@ -86,6 +85,7 @@ def eliminate_enumerations(sentences):
                         best_score = max([globals.SCORES[i[0]] for i in p_o_speech_special_case])
                         best_word = [i[0] for i in p_o_speech_special_case if globals.SCORES[i[0]] == best_score][0]
                         new_text += sentences[enumeration].replace(enumerations[enumeration][1], " " + best_word + " ") + " "
+                        elim_enums.append(enumerations[enumeration][1])
 
         # if they are null then append to the key sentence the None value
         else:
