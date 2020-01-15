@@ -4,6 +4,7 @@ import heapq
 import traceback
 
 from processing import globals
+from collections import defaultdict
 from processing.globals import get_word_score, PARAGRAPH_UPDATE_CONSTANT
 from processing.remove_dialog_v2 import remove_dialog
 #from processing.text_name_processor import get_principal_character_name, set_max_score_sentence_with_best_name
@@ -51,7 +52,7 @@ def process_text(input_text, alpha):
         # TODO: CALCULAT SCORUL CUVINTELOR DIN TEXT
 
         # Product sentence scores
-        sent2score = {}
+        sent2score = defaultdict(lambda: 0)
 
         paragraphs = str.splitlines(text)
         # set_max_score_sentence_with_best_name(principal_character_name, paragraphs, sent2score)
@@ -63,9 +64,10 @@ def process_text(input_text, alpha):
             sentences = nltk.sent_tokenize(paragraph)
             paragraph_score = 0
 
+            # calculate Sentences scores
             for sentence in sentences:
                 for word in nltk.word_tokenize(sentence.lower()):
-                    from random import randrange
+                    sent2score[sentence] += globals.SCORES[word]
                     if sentence not in sent2score.keys():
                         # sent2score[sentence] = get_word_score(word)
                         # TODO: FIX THIS HERE AFTER TEXT IS ANALYSED
@@ -78,6 +80,7 @@ def process_text(input_text, alpha):
             for sentence in sentences:
                 if sentence in sent2score.keys():
                     paragraph_score += sent2score[sentence]
+
             # calculate paragrahpes scores
             for sentence in sentences:
                 if sentence in sent2score.keys():
