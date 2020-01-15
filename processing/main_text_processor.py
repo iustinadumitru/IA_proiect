@@ -40,7 +40,8 @@ def process_text(input_text, alpha):
         text = re.sub(r'[ \t]+', ' ', text)  # reducing spaces and tab to single space
         text = re.sub(r'[\n]+', '\n', text)  # eliminating multiple endlines
 
-        # TODO: CALCUALTE WORD SCORES HERE
+        # This line is here just so its clear when the score is calculated
+        _ = globals.SCORES[globals.ORIGINAL_TEXT[0]]
 
         text, alpha = remove_dialog(text, alpha)
         if alpha >= 100:
