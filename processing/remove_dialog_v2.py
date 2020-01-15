@@ -1,8 +1,6 @@
 import re
-
-
+from processing import globals
 def remove_dialog(text, alpha):
-
     text = re.sub(r'[ \t]*-', '-', text)
     #print(text)
     final_text = ""
@@ -10,9 +8,13 @@ def remove_dialog(text, alpha):
     while i < len(text):
         if i == 0 and text[i] == "-":
             while i < len(text) and text[i] != '\n':
+                if text[i] in ".?!":
+                    globals.NR_LINES_DIALOG_REMOVED += 1
                 i += 1
         elif text[i] == "-" and text[i - 1] == "\n":
             while i < len(text) and text[i] != '\n':
+                if text[i] in ".?!":
+                    globals.NR_LINES_DIALOG_REMOVED += 1
                 i += 1
         else:
             final_text += text[i]

@@ -103,11 +103,21 @@ def process_text(input_text, alpha):
 
 
 if __name__ == '__main__':
-    process_text("""
-   -        Acasa e bine.
+
+    globals.ORIGINAL_TEXT = """
+   -        Acasa e bine. Merge treaba.Bun.Yeah.
 Cristi doarme,e vesel si n  - a facut ce trebuie.
 
 
 s - a auzit un bum. Acasa este frig.
 Afara ninge.
-""", 50)
+"""
+    print(process_text("""
+   -        Acasa e bine. Merge treaba.Bun.Yeah.
+Cristi doarme,e vesel si n  - a facut ce trebuie.
+
+
+s - a auzit un bum. Acasa este frig.
+Afara ninge.
+""", 50))
+    print(globals.NR_LINES_DIALOG_REMOVED)
