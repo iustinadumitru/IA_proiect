@@ -51,6 +51,7 @@ def index():
                 data["enumerations_removed"] = globals.ENUMERATIONS_REMOVED
                 data["lines_shown"] = globals.NR_OF_LINES_SHOWN
                 data["main_character"] = globals.MAIN_CHARACTER_NAME
+                data["alpha"] = globals.ALPHA
 
         else:
             flash('Campul text este obligatoriu.')
