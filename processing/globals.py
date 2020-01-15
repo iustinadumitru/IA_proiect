@@ -9,6 +9,10 @@ word_to_english = dict()
 #this dictionary will register the translation of a word
 #word_to_english["caine"] = "dog"
 
+ENUMERATIONS_REMOVED = list()
+NR_LINES_DIALOG_REMOVED = 0
+NR_OF_LINES_SHOWN = 0
+
 WORD_COUNT = {}
 MAX_SCORE = int(1e9)
 PARAGRAPH_UPDATE_CONSTANT = 0.2
