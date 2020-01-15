@@ -64,7 +64,8 @@ def eliminate_enumerations(sentences):
                 if enum_word[1] == 'NOUN' or enum_word[1] == 'ADJ' or enum_word[1] == 'ADV' or enum_word[0].lower() == 'și' or enum_word[0].lower() == 'si':
                     count += 1
             # if they are then eliminate the enum from the sentence and put it in output text
-            if count == len(p_o_speech):
+            if count > 0 and count == len(p_o_speech):
+                print(p_o_speech)
                 best_score = max([globals.SCORES[i[0]] for i in p_o_speech])
                 best_word = [i[0] for i in p_o_speech if globals.SCORES[i[0]] == best_score][0]
                 new_text += sentences[enumeration].replace(enumerations[enumeration][0], " " + best_word + " ") + " "

@@ -1,8 +1,9 @@
 from wtforms import Form, validators, StringField, IntegerField
 from flask import Flask, render_template, flash, request, redirect
 
-from processing import globals
 from processing.main_text_processor import process_text
+from collections import defaultdict
+from processing import globals
 
 # App config.
 DEBUG = True
@@ -25,8 +26,13 @@ def index():
         alpha = request.form['alpha']
         input_text = request.form['input_text']
 
+        globals._SCORES = defaultdict(lambda: 0)
+        globals.ENUMERATIONS_REMOVED = list()
+        globals.NR_LINES_DIALOG_REMOVED = 0
+        globals.NR_OF_LINES_SHOWN = 0
+        globals.WORD_COUNT = {}
+        globals.MAX_SCORE = int(1e9)
         globals.ORIGINAL_TEXT = input_text
-        globals.reset_scores()
 
         if form.validate():
             output_text, error_message = process_text(input_text, alpha)
@@ -44,6 +50,7 @@ def index():
                 data["lines_removed"] = globals.NR_LINES_DIALOG_REMOVED
                 data["enumerations_removed"] = globals.ENUMERATIONS_REMOVED
                 data["lines_shown"] = globals.NR_OF_LINES_SHOWN
+                data["main_character"] = globals.MAIN_CHARACTER_NAME
 
         else:
             flash('Campul text este obligatoriu.')

@@ -98,15 +98,6 @@ def __getattr__(name):
         return _SCORES
 
 
-def reset_scores():
-    _SCORES = defaultdict(lambda: 0)
-    ENUMERATIONS_REMOVED = list()
-    NR_LINES_DIALOG_REMOVED = 0
-    NR_OF_LINES_SHOWN = 0
-    WORD_COUNT = {}
-    MAX_SCORE = int(1e9)
-
-
 def get_hashed_english_word(word):
     if word.lower() in word_to_english.keys():
         return (word_to_english[word.lower()]).lower()

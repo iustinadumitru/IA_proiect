@@ -85,6 +85,12 @@
                                         <br>
 
                                         <div class="row-sm">
+                                            {% if data.main_character != "No one" %} }
+                                                {{ data.main_character }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="row-sm">
                                             <p> <b> Number of lines with dialog removed: </b> {{ data.lines_removed }} </p>
                                         </div>
 
@@ -92,7 +98,7 @@
                                             <p> <b>Enumerations removed: </b> </p>
                                             -
                                             {% for index in range((data.enumerations_removed | length) - 1)%}
-                                                {{ data.enumerations_removed[index] }},
+                                                {{ data.enumerations_removed[index] }} ||
                                             {% endfor %}
 
                                             {{ data.enumerations_removed[-1] }}
