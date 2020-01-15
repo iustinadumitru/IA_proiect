@@ -109,7 +109,11 @@ def get_part_of_speech_enum(tagged_sentences, tokenized_enum):
             if token_regex.findall(it[0]):
                 if token_regex.findall(it[0])[0].lower() == tokenized_enum[elem].lower():
                     part_of_speech.append(it[1])
-        dict_occur_pospeech = Counter(part_of_speech).most_common(1)[0]
+        try:
+            dict_occur_pospeech = Counter(part_of_speech).most_common(1)[0]
+        except:
+            print(part_of_speech, dict_occur_pospeech)
+
         part_of_speech_enum.append([tokenized_enum[elem], dict_occur_pospeech[0]])
     return part_of_speech_enum
 

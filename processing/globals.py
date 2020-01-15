@@ -70,7 +70,7 @@ def __getattr__(name):
                 max_word_part_count = 0
                 word_part = ""
 
-                if word in stop_words.lower():
+                if word.lower() in stop_words:
                     _SCORES[word] = 1
                     continue
 
