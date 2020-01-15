@@ -77,7 +77,8 @@ def process_text(input_text, alpha):
             # calculate paragrahpes scores
             for sentence in sentences:
                 if sentence in sent2score.keys():
-                    sent2score[sentence] += int(PARAGRAPH_UPDATE_CONSTANT * paragraph_score)
+                    if sent2score[sentence] < globals.MAX_SCORE: #ignoring the sentence with maximum score
+                        sent2score[sentence] += int(PARAGRAPH_UPDATE_CONSTANT * paragraph_score)
 
         # Gettings best n lines
         globals.NR_OF_LINES_SHOWN = int(len(sent2score) - ((alpha / 100) * len(sent2score)))
